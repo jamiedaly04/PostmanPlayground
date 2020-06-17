@@ -1,0 +1,301 @@
+{
+	"info": {
+		"_postman_id": "0b3bb8a3-f3bc-4b8f-8fa9-fc1b2e4350e2",
+		"name": "Github API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create TestRepo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8c35c67a-b578-4202-828f-573427845370",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"User\", jsonData.owner.login);\r",
+							"postman.setEnvironmentVariable(\"RepoName\", jsonData.name);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{AuthPword}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{AuthUsername}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"TestRepo\",\r\n  \"description\": \"Repository for using the GIthub API via Postman\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{GitHubAPIURL}}/user/repos",
+					"host": [
+						"{{GitHubAPIURL}}"
+					],
+					"path": [
+						"user",
+						"repos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET New Repo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6c11a4d9-643c-4cd4-97cf-159273c8df20",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{GitHubAPIURL}}/repos/{{User}}/{{RepoName}}",
+					"host": [
+						"{{GitHubAPIURL}}"
+					],
+					"path": [
+						"repos",
+						"{{User}}",
+						"{{RepoName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create issue (Bug) in Repo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0df65bdd-4fb0-4f7e-8397-640b36ad951b",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"IssueNumber\", jsonData.number);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{AuthPword}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{AuthUsername}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Found a bug\",\r\n  \"body\": \"This issue has been automatically created by Postman.\",\r\n  \"assignees\": [\r\n    \"jamiedaly04\"\r\n  ],\r\n  \"labels\": [\r\n    \"bug\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{GitHubAPIURL}}/repos/{{User}}/{{RepoName}}/issues",
+					"host": [
+						"{{GitHubAPIURL}}"
+					],
+					"path": [
+						"repos",
+						"{{User}}",
+						"{{RepoName}}",
+						"issues"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET New Issue",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "95a85ecc-9379-46c1-993d-a97b75bf087e",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.expect(jsonData.title).to.eql(\"Found a bug\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{GitHubAPIURL}}/repos/{{User}}/{{RepoName}}/issues/{{IssueNumber}}",
+					"host": [
+						"{{GitHubAPIURL}}"
+					],
+					"path": [
+						"repos",
+						"{{User}}",
+						"{{RepoName}}",
+						"issues",
+						"{{IssueNumber}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Repo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e8f68d8a-b0a1-45e7-b11d-1cf71aa6e3aa",
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{AuthUsername}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{AuthPword}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{GitHubAPIURL}}/repos/{{User}}/{{RepoName}}",
+					"host": [
+						"{{GitHubAPIURL}}"
+					],
+					"path": [
+						"repos",
+						"{{User}}",
+						"{{RepoName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Repo After Deletion",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6c11a4d9-643c-4cd4-97cf-159273c8df20",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.environment.unset(\"User\");\r",
+							"pm.environment.unset(\"RepoName\");\r",
+							"pm.environment.unset(\"IssueNumber\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{GitHubAPIURL}}/repos/{{User}}/{{RepoName}}",
+					"host": [
+						"{{GitHubAPIURL}}"
+					],
+					"path": [
+						"repos",
+						"{{User}}",
+						"{{RepoName}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
